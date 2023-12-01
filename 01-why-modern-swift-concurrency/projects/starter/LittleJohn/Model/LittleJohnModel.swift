@@ -45,6 +45,29 @@ class LittleJohnModel: ObservableObject {
     guard let url = URL(string: "http://localhost:8080/littlejohn/ticker?\(selectedSymbols.joined(separator: ","))") else {
       throw "The URL could not be created."
     }
+    let (stream, response) = try await liveURLSession.bytes(from: url)
+    guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+      throw "The server responded with an error."
+    }
+    for try await line in stream.lines {
+      let sortedSymbols = try JSONDecoder().decode([Stock].self, from: Data(line.utf8)).sorted { $0.name < $1.name }
+      await MainActor.run {
+        tickerSymbols = sortedSymbols
+      }
+    }
+  }
+  
+  func availableSymbols() async throws -> [String] {
+    guard let url = URL(string: "http://localhost:8080/littlejohn/symbols")
+    else {
+      throw "The URL could not be created."
+    }
+    let (data, response) = try await URLSession.shared.data(from: url)
+    guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+      throw "The server responded with an error."
+    }
+    
+    return try JSONDecoder().decode([String].self, from: data)
   }
 
   /// A URL session that lets requests run indefinitely so we can receive live updates from server.
