@@ -56,6 +56,13 @@ class LittleJohnModel: ObservableObject {
         print("Updated: \(Date())")
       }
     }
+    
+    print("debug: stream failed..")
+    
+    await MainActor.run {
+      // This will only be executed if try await line in stream.lines fails
+      tickerSymbols = []
+    }
   }
   
   func availableSymbols() async throws -> [String] {
