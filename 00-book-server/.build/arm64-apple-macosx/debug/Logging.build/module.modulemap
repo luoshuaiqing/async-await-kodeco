@@ -1,0 +1,4 @@
+module Logging {
+    header "/Users/shuaiqingluo/Dev/async-await-kodeco/00-book-server/.build/arm64-apple-macosx/debug/Logging.build/Logging-Swift.h"
+    requires objc
+}

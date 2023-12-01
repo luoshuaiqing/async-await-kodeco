@@ -1,0 +1,4 @@
+module CBacktrace {
+    umbrella "/Users/shuaiqingluo/Dev/async-await-kodeco/00-book-server/.build/checkouts/swift-backtrace/Sources/CBacktrace/include"
+    export *
+}

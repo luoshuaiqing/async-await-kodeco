@@ -1,0 +1,4 @@
+module NIOFoundationCompat {
+    header "/Users/shuaiqingluo/Dev/async-await-kodeco/00-book-server/.build/arm64-apple-macosx/debug/NIOFoundationCompat.build/NIOFoundationCompat-Swift.h"
+    requires objc
+}

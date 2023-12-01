@@ -1,0 +1,4 @@
+module CryptoBoringWrapper {
+    header "/Users/shuaiqingluo/Dev/async-await-kodeco/00-book-server/.build/arm64-apple-macosx/debug/CryptoBoringWrapper.build/CryptoBoringWrapper-Swift.h"
+    requires objc
+}

@@ -1,0 +1,4 @@
+module CVaporURLParser {
+    umbrella "/Users/shuaiqingluo/Dev/async-await-kodeco/00-book-server/.build/checkouts/vapor/Sources/CVaporURLParser/include"
+    export *
+}

@@ -1,0 +1,4 @@
+module NIOHTTPCompression {
+    header "/Users/shuaiqingluo/Dev/async-await-kodeco/00-book-server/.build/arm64-apple-macosx/debug/NIOHTTPCompression.build/NIOHTTPCompression-Swift.h"
+    requires objc
+}

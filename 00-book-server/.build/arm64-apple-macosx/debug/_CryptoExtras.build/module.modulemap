@@ -1,0 +1,4 @@
+module _CryptoExtras {
+    header "/Users/shuaiqingluo/Dev/async-await-kodeco/00-book-server/.build/arm64-apple-macosx/debug/_CryptoExtras.build/_CryptoExtras-Swift.h"
+    requires objc
+}
