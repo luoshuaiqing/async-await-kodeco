@@ -57,6 +57,7 @@ class LittleJohnModel: ObservableObject {
       }
     }
     
+    // This line will run before we throws the error when try await line in stream.lines failed
     print("debug: stream failed..")
     
     await MainActor.run {
