@@ -53,6 +53,7 @@ class LittleJohnModel: ObservableObject {
       let sortedSymbols = try JSONDecoder().decode([Stock].self, from: Data(line.utf8)).sorted { $0.name < $1.name }
       await MainActor.run {
         tickerSymbols = sortedSymbols
+        print("Updated: \(Date())")
       }
     }
   }
