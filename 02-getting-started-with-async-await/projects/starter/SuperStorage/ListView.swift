@@ -91,8 +91,14 @@ struct ListView: View {
       .task {
         guard files.isEmpty else { return }
         do {
-          async let files = try await model.availableFiles()
-          async let status = try await model.status()
+          // model.availableFiles() will not be executed until we await it
+          async let files = try await model.availableFiles() // this will print "debug: availableFiles.."
+          async let status = try await model.status() // this will print "debug: status.."
+          print("debug: await start")
+          let (filesResult, statusResult) = try await (files, status)
+          print("debug: await ends")
+          self.files = filesResult
+          self.status = statusResult
         } catch {
           lastErrorMessage = error.localizedDescription
         }

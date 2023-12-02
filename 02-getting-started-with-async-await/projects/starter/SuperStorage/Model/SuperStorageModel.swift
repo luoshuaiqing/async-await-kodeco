@@ -102,6 +102,7 @@ extension SuperStorageModel {
 
 extension SuperStorageModel {
   func availableFiles() async throws -> [DownloadFile] {
+    print("debug: availableFiles..")
     guard let url = URL(string: "http://localhost:8080/files/list") else {
       throw "Could not create the URL"
     }
@@ -118,6 +119,7 @@ extension SuperStorageModel {
   }
   
   func status() async throws -> String {
+    print("debug: status..")
     guard let url = URL(string: "http://localhost:8080/files/status") else {
       throw "Could not create the URL."
     }
