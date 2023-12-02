@@ -55,7 +55,11 @@ struct DownloadView: View {
         downloadSingleAction: {
           // Download a file in a single go.
           Task {
-            fileData = try await model.download(file: file)
+            isDownloadActive = true
+            do {
+              fileData = try await model.download(file: file)
+            } catch { }
+            isDownloadActive = false
           }
         },
         downloadWithUpdatesAction: {
