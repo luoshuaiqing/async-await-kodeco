@@ -36,6 +36,8 @@ import Foundation
 class SuperStorageModel: ObservableObject {
   /// The list of currently running downloads.
   @Published var downloads: [DownloadInfo] = []
+  
+  @TaskLocal static var supportsPartialDownloads = false
 
   /// Downloads a file and returns its content.
   func download(file: DownloadFile) async throws -> Data {

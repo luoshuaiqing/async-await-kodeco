@@ -69,7 +69,9 @@ struct DownloadView: View {
           isDownloadActive = true
           downloadTask = Task {
             do {
-              fileData = try await model.downloadWithProgress(file: file)
+              try await SuperStorageModel.$supportsPartialDownloads.withValue(file.name.hasSuffix(".jpeg")) {
+                fileData = try await model.downloadWithProgress(file: file)
+              }
             } catch { }
             isDownloadActive = false
           }
