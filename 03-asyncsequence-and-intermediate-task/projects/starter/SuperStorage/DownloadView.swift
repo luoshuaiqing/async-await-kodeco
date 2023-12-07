@@ -99,6 +99,7 @@ struct DownloadView: View {
     .listStyle(.insetGrouped)
     .toolbar {
       Button(action: {
+        model.stopDownloads = true
       }, label: { Text("Cancel All") })
         .disabled(model.downloads.isEmpty)
     }

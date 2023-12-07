@@ -58,6 +58,9 @@ class SuperStorageModel: ObservableObject {
 
   /// Downloads a file, returns its data, and updates the download progress in ``downloads``.
   func downloadWithProgress(file: DownloadFile) async throws -> Data {
+    if await stopDownloads, !Self.supportsPartialDownloads {
+      throw CancellationError()
+    }
     return try await downloadWithProgress(fileName: file.name, name: file.name, size: file.size)
   }
 
