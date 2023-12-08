@@ -54,6 +54,27 @@ class BlabberModel: ObservableObject {
   /// Does a countdown and sends the message.
   func countdown(to message: String) async throws {
     guard !message.isEmpty else { return }
+    let counter = AsyncStream<String> { continuation in
+      var countdown = 3
+      Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+        guard countdown > 0 else {
+          timer.invalidate()
+          // Approach #1
+          continuation.yield(with: .success("🎉 \(message)"))
+          
+          // Approach #2
+//          continuation.yield("🎉 \(message)")
+//          continuation.finish()
+          return
+        }
+        continuation.yield("\(countdown)...")
+        countdown -= 1
+      }
+    }
+    
+    for await countdownMessage in counter {
+      try await say(countdownMessage)
+    }
   }
 
   /// Start live chat updates
