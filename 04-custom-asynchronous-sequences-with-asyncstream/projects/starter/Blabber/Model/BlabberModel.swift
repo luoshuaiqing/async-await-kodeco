@@ -115,6 +115,14 @@ class BlabberModel: ObservableObject {
     }
     messages.append(Message(message: "\(status.activeUsers) active users"))
     
+    let notifications = Task {
+      await observeAppStatus()
+    }
+    
+    defer {
+      notifications.cancel()
+    }
+    
     for try await line in stream.lines {
       if let data = line.data(using: .utf8),
          let update = try? JSONDecoder().decode(Message.self, from: data) {
@@ -139,6 +147,12 @@ class BlabberModel: ObservableObject {
     let (_, response) = try await urlSession.data(for: request, delegate: nil)
     guard (response as? HTTPURLResponse)?.statusCode == 200 else {
       throw "The server responded with an error."
+    }
+  }
+  
+  func observeAppStatus() async {
+    for await _ in NotificationCenter.default.notifications(for: UIApplication.willResignActiveNotification) {
+      try? await say("\(username) went away", isSystemMessage: true)
     }
   }
 
