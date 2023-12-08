@@ -54,27 +54,56 @@ class BlabberModel: ObservableObject {
   /// Does a countdown and sends the message.
   func countdown(to message: String) async throws {
     guard !message.isEmpty else { return }
-    let counter = AsyncStream<String> { continuation in
-      var countdown = 3
-      Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-        guard countdown > 0 else {
-          timer.invalidate()
-          // Approach #1
-          continuation.yield(with: .success("🎉 \(message)"))
-          
-          // Approach #2
-//          continuation.yield("🎉 \(message)")
-//          continuation.finish()
-          return
-        }
-        continuation.yield("\(countdown)...")
+    
+    // Approach #1
+    var countdown = 3
+    let counter = AsyncStream<String> {
+      guard countdown >= 0 else { return nil }
+      
+      do {
+        try await Task.sleep(for: .seconds(1))
+      } catch {
+        return nil
+      }
+      
+      defer {
         countdown -= 1
       }
+      
+      if countdown == 0 {
+        return "🎉 \(message)"
+      }
+      return "\(countdown)..."
     }
     
-    for await countdownMessage in counter {
+    // Approach #2
+//    let counter = AsyncStream<String> { continuation in
+//      var countdown = 3
+//      Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+//        guard countdown > 0 else {
+//          timer.invalidate()
+//          // Approach #1
+//          continuation.yield(with: .success("🎉 \(message)"))
+//          
+//          // Approach #2
+////          continuation.yield("🎉 \(message)")
+////          continuation.finish()
+//          return
+//        }
+//        continuation.yield("\(countdown)...")
+//        countdown -= 1
+//      }
+    }
+    
+    // Approach #1
+    try await counter.forEach { countdownMessage in
       try await say(countdownMessage)
     }
+    
+    // Approach #2
+//    for await countdownMessage in counter {
+//      try await say(countdownMessage)
+//    }
   }
 
   /// Start live chat updates
@@ -170,4 +199,12 @@ class BlabberModel: ObservableObject {
     configuration.timeoutIntervalForRequest = .infinity
     return URLSession(configuration: configuration)
   }()
+}
+
+extension AsyncSequence {
+  func forEach(_ body: (Element) async throws -> Void) async throws {
+    for try await element in self {
+      try await body(element)
+    }
+  }
 }
