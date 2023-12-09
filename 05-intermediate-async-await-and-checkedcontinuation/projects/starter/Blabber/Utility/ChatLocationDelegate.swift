@@ -52,8 +52,8 @@ class ChatLocationDelegate: NSObject, CLLocationManagerDelegate {
       manager.startUpdatingLocation()
     default:
       continuation?.resume(throwing: "The app isn't authorized to use location data")
+      continuation = nil
     }
-    continuation = nil
   }
   
   func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
