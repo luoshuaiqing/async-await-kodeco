@@ -49,6 +49,9 @@ class BlabberModel: ObservableObject {
 
   /// Shares the current user's address in chat.
   func shareLocation() async throws {
+    let location: CLLocation = try await withCheckedContinuation { [weak self] continuation in
+      
+    }
   }
 
   /// Does a countdown and sends the message.
