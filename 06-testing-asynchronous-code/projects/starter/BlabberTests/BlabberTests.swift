@@ -59,6 +59,26 @@ class BlabberTests: XCTestCase {
   }
   
   func testModelCountdown() async throws {
+    async let countdown = model.countdown(to: "Tada!")
+    async let messages = TimeoutTask(seconds: 10) {
+      // The way we are testing this is not correct. For example, if you comment back the following line, then the test will still fail.
+//      try await Task.sleep(nanoseconds: 7_000_000_000)
+      return await TestURLProtocol.requests
+        .prefix(4)
+        .compactMap(\.httpBody)
+        .compactMap { data in
+          try? JSONDecoder()
+            .decode(Message.self, from: data)
+            .message
+        }.reduce(into: []) { messages, message in
+          messages.append(message)
+        }
+    }.value
     
+    let (_, messagesResult) = try await (countdown, messages)
+    XCTAssertEqual(
+      ["3...", "2...", "1...", "🎉 Tada!"],
+      messagesResult
+    )
   }
 }

@@ -35,7 +35,13 @@ import Foundation
 /// A catch-all URL protocol that returns successful response and records all requests.
 class TestURLProtocol: URLProtocol {
   
-  static private var lastRequest: URLRequest?
+  static var lastRequest: URLRequest? {
+    didSet {
+      if let request = lastRequest {
+        continuation?.yield(request)
+      }
+    }
+  }
   
   static private var continuation: AsyncStream<URLRequest>.Continuation?
   static var requests: AsyncStream<URLRequest> = {
