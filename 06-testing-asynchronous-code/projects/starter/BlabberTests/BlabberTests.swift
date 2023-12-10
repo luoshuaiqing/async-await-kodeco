@@ -35,7 +35,7 @@ import XCTest
 
 class BlabberTests: XCTestCase {
   
-  @MainActor 
+  @MainActor
   let model: BlabberModel = {
     let model = BlabberModel()
     model.username = "test"
@@ -56,5 +56,9 @@ class BlabberTests: XCTestCase {
     let httpBody = try XCTUnwrap(request.httpBody)
     let message = try XCTUnwrap(try? JSONDecoder().decode(Message.self, from: httpBody))
     XCTAssertEqual(message.message, "Hello!")
+  }
+  
+  func testModelCountdown() async throws {
+    
   }
 }

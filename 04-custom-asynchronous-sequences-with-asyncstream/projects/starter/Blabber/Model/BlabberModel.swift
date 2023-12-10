@@ -93,7 +93,7 @@ class BlabberModel: ObservableObject {
 //        continuation.yield("\(countdown)...")
 //        countdown -= 1
 //      }
-    }
+//    }
     
     // Approach #1
     try await counter.forEach { countdownMessage in
