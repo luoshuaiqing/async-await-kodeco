@@ -79,6 +79,12 @@ class ScanModel: ObservableObject {
           index += 1
         }
       }
+      
+      await MainActor.run {
+        completed = 0
+        countPerSecond = 0
+        scheduled = 0
+      }
     }
   }
 }
