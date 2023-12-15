@@ -67,6 +67,11 @@ class ScanModel: ObservableObject {
           await self.worker(number: number)
         }
       }
+      
+      for await result in group {
+        print("Completed: \(result)")
+      }
+      print("Done.")
     }
   }
 }
