@@ -33,7 +33,7 @@
 import Foundation
 import UIKit
 
-class EmojiArtModel: ObservableObject {
+actor EmojiArtModel: ObservableObject {
   
   private(set) var verifiedCount = 0
   
@@ -72,11 +72,15 @@ class EmojiArtModel: ObservableObject {
       imageFeed.forEach { file in
         group.addTask { [unowned self] in
           try await Checksum.verify(file.checksum)
-          self.verifiedCount += 1
+          await self.increaseVerifiedCount()
         }
       }
       
       try await group.waitForAll()
     }
+  }
+  
+  private func increaseVerifiedCount() {
+    verifiedCount += 1
   }
 }
