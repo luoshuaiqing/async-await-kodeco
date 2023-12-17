@@ -34,6 +34,9 @@ import Foundation
 import UIKit
 
 class EmojiArtModel: ObservableObject {
+  
+  private(set) var verifiedCount = 0
+  
   @Published private(set) var imageFeed: [ImageFile] = []
 
   func loadImages() async throws {
@@ -62,5 +65,18 @@ class EmojiArtModel: ObservableObject {
       throw "The server responded with an error."
     }
     return data
+  }
+  
+  func verifyImages() async throws {
+    try await withThrowingTaskGroup(of: Void.self) { group in
+      imageFeed.forEach { file in
+        group.addTask { [unowned self] in
+          try await Checksum.verify(file.checksum)
+          self.verifiedCount += 1
+        }
+      }
+      
+      try await group.waitForAll()
+    }
   }
 }
