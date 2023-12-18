@@ -16,4 +16,13 @@ import UIKit
     }
   }
   
+  func store(image: UIImage, forKey key: String) async throws {
+    guard let data = image.pngData() else {
+      throw "Could not save image \(key)"
+    }
+    let fileName = DiskStorage.fileName(for: key)
+    try await storage.write(data, name: fileName)
+    storedImageIndex.insert(fileName)
+  }
+  
 }
