@@ -25,4 +25,40 @@ import UIKit
     storedImageIndex.insert(fileName)
   }
   
+  func image(_ key: String) async throws -> UIImage {
+    let keys = await imageLoader.cache.keys
+    if keys.contains(key) {
+      print("Cached in-memory")
+      return try await imageLoader.image(key)
+    }
+    
+    do {
+      let fileName = DiskStorage.fileName(for: key)
+      if !storedImageIndex.contains(fileName) {
+        throw "Image not persisted"
+      }
+      
+      let data = try await storage.read(name: fileName)
+      guard let image = UIImage(data: data) else {
+        throw "Invalid image data"
+      }
+      
+      print("Cached on disk")
+      
+      await imageLoader.add(image, forKey: key)
+      return image
+    } catch {
+      let image = try await imageLoader.image(key)
+      try await store(image: image, forKey: key)
+      return image
+    }
+  }
+  
+  func clear() async {
+    for name in storedImageIndex {
+      try? await storage.remove(name: name)
+    }
+    storedImageIndex.removeAll()
+  }
+  
 }
