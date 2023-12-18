@@ -42,7 +42,7 @@ struct AppMain: App {
     WindowGroup {
       VStack {
         if isVerified {
-          ListView()
+          ListView().environmentObject(ImageLoader())
         } else {
           LoadingView(isVerified: $isVerified)
         }
