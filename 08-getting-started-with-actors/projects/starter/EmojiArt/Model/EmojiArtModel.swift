@@ -37,10 +37,12 @@ actor EmojiArtModel: ObservableObject {
   
   private(set) var verifiedCount = 0
   
-  @Published private(set) var imageFeed: [ImageFile] = []
+  @Published @MainActor private(set) var imageFeed: [ImageFile] = []
 
   func loadImages() async throws {
-    imageFeed.removeAll()
+    await MainActor.run {
+      imageFeed.removeAll()
+    }
     guard let url = URL(string: "http://localhost:8080/gallery/images") else {
       throw "Could not create endpoint URL"
     }
@@ -51,7 +53,9 @@ actor EmojiArtModel: ObservableObject {
     guard let list = try? JSONDecoder().decode([ImageFile].self, from: data) else {
       throw "The server response was not recognized."
     }
-    imageFeed = list
+    await MainActor.run {
+      imageFeed = list
+    }
   }
 
   /// Downloads an image and returns its content.
@@ -69,7 +73,7 @@ actor EmojiArtModel: ObservableObject {
   
   func verifyImages() async throws {
     try await withThrowingTaskGroup(of: Void.self) { group in
-      imageFeed.forEach { file in
+      await imageFeed.forEach { file in
         group.addTask { [unowned self] in
           try await Checksum.verify(file.checksum)
           await self.increaseVerifiedCount()
