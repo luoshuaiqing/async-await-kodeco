@@ -32,7 +32,7 @@
 
 import Foundation
 
-class DiskStorage {
+@ImageDatabase class DiskStorage {
   private var folder: URL
 
   init() {
