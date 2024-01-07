@@ -14,6 +14,7 @@ import UIKit
     for fileUrl in try await storage.persistedFiles() {
       storedImagesIndex.insert(fileUrl.lastPathComponent)
     }
+    await imageLoader.setUp()
   }
   
   func store(image: UIImage, forKey key: String) async throws {
@@ -58,6 +59,10 @@ import UIKit
       try? await storage.remove(name: name)
     }
     storedImagesIndex.removeAll()
+  }
+  
+  func clearInMemoryAssets() async {
+    await imageLoader.clear()
   }
   
 }

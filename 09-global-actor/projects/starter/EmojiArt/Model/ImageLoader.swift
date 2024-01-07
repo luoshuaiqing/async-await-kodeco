@@ -40,6 +40,25 @@ actor ImageLoader: ObservableObject {
   }
 
   private(set) var cache: [String: DownloadState] = [:]
+  
+  @MainActor private(set) var inMemoryAccess: AsyncStream<Int>?
+  private var inMemoryAccessContinutation: AsyncStream<Int>.Continuation?
+  private var inMemoryAccessCounter = 0 {
+    didSet { inMemoryAccessContinutation?.yield(inMemoryAccessCounter) }
+  }
+  
+  deinit {
+    inMemoryAccessContinutation?.finish()
+  }
+  
+  func setUp() async {
+    let accessStream = AsyncStream<Int> { continuation in
+      inMemoryAccessContinutation = continuation
+    }
+    await MainActor.run {
+      inMemoryAccess = accessStream
+    }
+  }
 
   func add(_ image: UIImage, forKey key: String) {
     cache[key] = .completed(image)
@@ -49,6 +68,7 @@ actor ImageLoader: ObservableObject {
     if let cached = cache[serverPath] {
       switch cached {
       case .completed(let image):
+        inMemoryAccessCounter += 1
         return image
       case .inProgress(let task):
         return try await task.value
