@@ -7,12 +7,12 @@ import UIKit
   let imageLoader = ImageLoader()
   
   private var storage: DiskStorage!
-  private var storedImageIndex = Set<String>()
+  private var storedImagesIndex = Set<String>()
   
-  func setup() async throws {
+  func setUp() async throws {
     storage = await DiskStorage()
-    for fileURL in try await storage.persistedFiles() {
-      storedImageIndex.insert(fileURL.lastPathComponent)
+    for fileUrl in try await storage.persistedFiles() {
+      storedImagesIndex.insert(fileUrl.lastPathComponent)
     }
   }
   
@@ -22,7 +22,7 @@ import UIKit
     }
     let fileName = DiskStorage.fileName(for: key)
     try await storage.write(data, name: fileName)
-    storedImageIndex.insert(fileName)
+    storedImagesIndex.insert(fileName)
   }
   
   func image(_ key: String) async throws -> UIImage {
@@ -34,7 +34,7 @@ import UIKit
     
     do {
       let fileName = DiskStorage.fileName(for: key)
-      if !storedImageIndex.contains(fileName) {
+      if !storedImagesIndex.contains(fileName) {
         throw "Image not persisted"
       }
       
@@ -44,7 +44,6 @@ import UIKit
       }
       
       print("Cached on disk")
-      
       await imageLoader.add(image, forKey: key)
       return image
     } catch {
@@ -55,10 +54,10 @@ import UIKit
   }
   
   func clear() async {
-    for name in storedImageIndex {
+    for name in storedImagesIndex {
       try? await storage.remove(name: name)
     }
-    storedImageIndex.removeAll()
+    storedImagesIndex.removeAll()
   }
   
 }
